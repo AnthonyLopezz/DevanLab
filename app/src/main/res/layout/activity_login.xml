@@ -3,33 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="@color/background_dark"
+    android:background="@color/Mischka950"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activity.LoginActivity">
 
     <ImageView
         android:id="@+id/imageView5"
-        android:layout_width="392dp"
-        android:layout_height="171dp"
-        android:layout_marginEnd="1dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/top_background" />
+        app:srcCompat="@drawable/bannersantotomas" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hey there, \n Please Login"
         android:layout_marginTop="32dp"
-        android:layout_marginLeft="32dp"
-        android:textSize="30dp"
+        android:layout_marginRight="15dp"
+        android:text="Hey there, \nPlease Login"
+        android:textColor="@color/Mischka50"
+        android:textSize="25dp"
         android:textStyle="bold"
-        android:textColor="@color/background_white"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
@@ -37,9 +36,12 @@
         android:layout_width="338dp"
         android:layout_height="360dp"
 
-        app:layout_constraintStart_toStartOf="@+id/textView"
+        app:layout_constraintEnd_toEndOf="@+id/textView"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:srcCompat="@drawable/pondering" />
+        app:srcCompat="@drawable/pondering"
+        app:layout_constraintBottom_toBottomOf="@id/passwordEditText"
+        tools:ignore="NotSibling" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -55,9 +57,9 @@
             android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Email"
+            android:text="@string/email"
 
-            android:textColor="@color/text_dark"
+            android:textColor="@color/Mischka50"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -68,11 +70,11 @@
             android:layout_marginTop="12dp"
             android:background="@drawable/edittext_background"
             android:ems="10"
-            android:hint="Enter Your Email"
+            android:hint="@string/enter_your_email"
             android:inputType="textEmailAddress"
             android:padding="12dp"
-            android:textColor="@color/background_white"
-            android:textColorHint="@color/background_white"
+            android:textColor="@color/Mischka50"
+            android:textColorHint="@color/Mischka300"
             android:textSize="18sp" />
 
         <TextView
@@ -80,8 +82,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Password"
-            android:textColor="@color/text_dark"
+            android:text="@string/password"
+            android:textColor="@color/Mischka50"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -92,11 +94,11 @@
             android:layout_marginTop="12dp"
             android:background="@drawable/edittext_background"
             android:ems="10"
-            android:hint="Enter Your Password"
+            android:hint="@string/enter_your_password"
             android:inputType="textPassword"
             android:padding="12dp"
-            android:textColor="@color/background_white"
-            android:textColorHint="@color/background_white"
+            android:textColor="@color/Mischka50"
+            android:textColorHint="@color/Mischka300"
             android:textSize="18sp" />
 
         <TextView
@@ -104,11 +106,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="Create an Account!"
             android:background="@drawable/social_btn_background"
-            android:padding="1dp"
+            android:padding="10dp"
+            android:text="@string/create_an_account"
             android:textAlignment="center"
-            android:textColor="@color/text_dark" />
+            android:textColor="@color/Mischka50" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -130,8 +132,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="Or Login with"
-                android:textColor="@color/text_dark" />
+                android:text="@string/or_login_with"
+                android:textColor="@color/Mischka50" />
 
             <View
                 android:id="@+id/view2"
@@ -173,7 +175,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:text="Facebook"
-                    android:textColor="@color/text_dark"
+                    android:textColor="@color/Mischka50"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -202,7 +204,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:text="Google"
-                    android:textColor="@color/text_dark"
+                    android:textColor="@color/Mischka50"
                     android:textSize="18sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -211,14 +213,38 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/signInButton"
+            style="@android:style/Widget.Button"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="32dp"
             android:background="@drawable/button_background"
-            android:textColor="@color/text_white"
+            android:text="@string/login"
+            android:textColor="@color/Mischka950"
             android:textSize="25sp"
-            android:textStyle="bold"
-            style="@android:style/Widget.Button"
-            android:text="Login" />
+            android:textStyle="bold" />
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/loading_animation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/opaque_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#80000000" /> <!-- #80000000 es un color negro con 50% de opacidad -->
+
+        <com.airbnb.lottie.LottieAnimationView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading_animation" />
+
+    </RelativeLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

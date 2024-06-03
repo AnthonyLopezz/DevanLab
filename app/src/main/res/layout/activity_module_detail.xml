@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_dark"
+    android:background="@color/Mischka950"
     android:paddingTop="24dp"
     tools:context=".Activity.ModuleDetailActivity">
 
@@ -32,7 +32,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:text=""
-                    android:textColor="@color/text_dark"
+                    android:textColor="@color/Mischka50"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -88,7 +88,7 @@
                         android:id="@+id/moduleDesc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/text_dark"
+                        android:textColor="@color/Mischka50"
                         android:textStyle="italic"
                         android:textSize="16sp"
                         android:text="" />
@@ -138,7 +138,7 @@
                         android:layout_height="wrap_content"
                         android:text="Complete Module"
                         android:textStyle="bold"
-                        android:textColor="@color/text_dark"
+                        android:textColor="@color/Mischka50"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -150,5 +150,27 @@
         </com.google.android.material.bottomnavigation.BottomNavigationView>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <RelativeLayout
+        android:id="@+id/loading_animation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/opaque_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#80000000" /> <!-- #80000000 es un color negro con 50% de opacidad -->
+
+        <com.airbnb.lottie.LottieAnimationView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading_animation" />
+
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

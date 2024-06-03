@@ -1,23 +1,25 @@
 package com.devan.lab.Activity
 
-import UserProgress
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.webkit.WebView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.devan.lab.Models.Course
 import com.devan.lab.R
+import com.devan.lab.Utils.ToastManager
+import com.devan.lab.Utils.ToastType
 import com.devan.lab.Utils.performClickAnimation
-import com.devan.lab.Utils.showAlert
-import com.devan.lab.Utils.showConfirm
 import com.devan.lab.service.FirebaseService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 
 class ModuleDetailActivity : AppCompatActivity() {
 
@@ -26,9 +28,11 @@ class ModuleDetailActivity : AppCompatActivity() {
     private lateinit var completeModule: ConstraintLayout
     private lateinit var moduleWebView: WebView
     private var course: Course? = null
+    private lateinit var loadingAnimation: RelativeLayout
+
 
     private val firebaseService by lazy {
-        FirebaseService(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance())
+        FirebaseService(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance(), FirebaseStorage.getInstance())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,10 +55,12 @@ class ModuleDetailActivity : AppCompatActivity() {
             if (courseId != -1 && moduleId != -1) {
                 initData(courseId, moduleId)
             } else {
-                Log.e("ModuleDetail", "Invalid course or module ID")
+                ToastManager.showToast("Please, try again.", this, ToastType.ERROR)
+
             }
         } else {
-            Log.e("ModuleDetail", "User email is null")
+            ToastManager.showToast("No active session", this, ToastType.INFO)
+
         }
     }
 
@@ -65,6 +71,9 @@ class ModuleDetailActivity : AppCompatActivity() {
         moduleDescription = findViewById(R.id.moduleDesc)
         completeModule = findViewById(R.id.completeModule)
         moduleWebView = findViewById(R.id.moduleWebView)
+        loadingAnimation = findViewById(R.id.loading_animation)
+
+        loadingAnimation.visibility = View.GONE
     }
 
     private fun fetchCourse(id: String) {
@@ -78,24 +87,33 @@ class ModuleDetailActivity : AppCompatActivity() {
     }
 
     private fun setup(courseId: Int, moduleId: Int) {
+
         completeModule.setOnClickListener {
             performClickAnimation(completeModule)
+
             val prefs: SharedPreferences =
                 getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
             val email: String? = prefs.getString("email", null)
             if (email != null) {
                 markModuleAsCompleted(email, courseId, moduleId)
             } else {
-                Log.e("ModuleDetail", "User email is null")
+                ToastManager.showToast("No active session", this, ToastType.ERROR)
+
             }
         }
     }
 
     private fun initData(courseId: Int, moduleId: Int) {
+        loadingAnimation.visibility = View.VISIBLE
         firebaseService.getCourseById(courseId.toString()) { course, error ->
+
             if (course != null) {
                 val module = course.modules.find { it.id == moduleId }
+                Log.d("ModuleDetail", "MODULE: $module")
+
                 if (module != null) {
+
+                    loadingAnimation.visibility = View.GONE
                     moduleName.text = module.title
                     moduleDescription.text = module.description
 
@@ -103,18 +121,22 @@ class ModuleDetailActivity : AppCompatActivity() {
                     moduleWebView.settings.javaScriptEnabled = true
 
                 } else {
-                    Log.e("ModuleDetail", "Module not found")
+                    ToastManager.showToast("Module not found.", this, ToastType.INFO)
+                    loadingAnimation.visibility = View.GONE
+
                 }
             } else {
-                Log.e("ModuleDetail", error ?: "Error fetching course data")
+                ToastManager.showToast("Please, try again later.", this, ToastType.INFO)
+                loadingAnimation.visibility = View.GONE
+
             }
         }
     }
 
     private fun markModuleAsCompleted(email: String, courseId: Int, moduleId: Int) {
-//        showAlert("Course $courseId Module $moduleId Email $email ", this)
-
+        Log.d("ModuleDetail", "Course $courseId Module $moduleId Email $email ")
         fetchCourse(courseId.toString())
+        loadingAnimation.visibility = View.VISIBLE
 
         firebaseService.getUserProgress(email, courseId) { userProgress, error ->
             Log.d("ModuleDetail", "userProgress: $userProgress")
@@ -130,16 +152,18 @@ class ModuleDetailActivity : AppCompatActivity() {
                     )
                     firebaseService.updateUserProgress(email, updatedUserProgress) { success, updateError ->
                         if (success) {
-                            showConfirm("Module marked as completed", this)
-                            Log.d("ModuleDetail", "Module marked as completed")
+                            loadingAnimation.visibility = View.GONE
+                            ToastManager.showToast("Congratulations! You complete a module", this, ToastType.SUCCESS)
                         } else {
-                            showAlert("Error updating progress", this)
-                            Log.e("ModuleDetail", "Error updating progress: $updateError")
+                            loadingAnimation.visibility = View.GONE
+                            ToastManager.showToast("Module Completed", this, ToastType.INFO)
                         }
                     }
                 }
             } else {
-                Log.e("ModuleDetail", error ?: "Error fetching user progress")
+                loadingAnimation.visibility = View.GONE
+                ToastManager.showToast("Module Completed", this, ToastType.INFO)
+
             }
         }
     }

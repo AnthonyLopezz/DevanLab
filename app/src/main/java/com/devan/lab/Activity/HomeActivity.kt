@@ -1,6 +1,5 @@
 package com.devan.lab.Activity
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -13,22 +12,26 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.bumptech.glide.Glide
 import com.devan.lab.R
+import com.devan.lab.Utils.RoundedCornersTransformation
+import com.devan.lab.Utils.ToastManager
+import com.devan.lab.Utils.ToastType
 import com.devan.lab.Utils.performClickAnimation
 import com.devan.lab.service.FirebaseService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 
 enum class ProviderType {
     BASIC,
-    GOOGLE,
-    FACEBOOK
+    GOOGLE
 }
+
 
 class HomeActivity : ComponentActivity() {
 
     private lateinit var nameViewText: TextView
-    private lateinit var providerViewText: TextView
     private lateinit var seeAllButton: TextView
     private lateinit var signOutButton: ConstraintLayout
     private lateinit var developingButton: ConstraintLayout
@@ -36,19 +39,18 @@ class HomeActivity : ComponentActivity() {
     private lateinit var iaMlButton: ConstraintLayout
     private lateinit var exploreButton: ConstraintLayout
 
-    private var viewYourCourseProgress: Boolean = false
-
     // Course
     private lateinit var noCourses: TextView
     private lateinit var yourCourseCard: ConstraintLayout
     private lateinit var yourCourseIcon: ImageView
+    private lateinit var profileImageView: ImageView
     private lateinit var yourCourseTitle: TextView
     private lateinit var progressText: TextView
     private lateinit var progressBar: ProgressBar
     private lateinit var percentText: TextView
 
     private val firebaseService by lazy {
-        FirebaseService(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance())
+        FirebaseService(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance(), FirebaseStorage.getInstance())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,6 +76,9 @@ class HomeActivity : ComponentActivity() {
 
         setupCategoryButtons()
 
+        val welcome = "Welcome!"
+        ToastManager.showToast(welcome, this, ToastType.SUCCESS)
+
         if (email != null) {
             fetchFirstCompletedCourse(email)
             getAllCourses(email)
@@ -96,7 +101,6 @@ class HomeActivity : ComponentActivity() {
     private fun initComponents() {
         nameViewText = findViewById(R.id.nameViewText)
         seeAllButton = findViewById(R.id.seeAllButton)
-        providerViewText = findViewById(R.id.providerTextView)
         signOutButton = findViewById(R.id.signOutButton)
 
         signOutButton = findViewById(R.id.signOutButton)
@@ -108,6 +112,7 @@ class HomeActivity : ComponentActivity() {
         noCourses = findViewById(R.id.noCourses)
         yourCourseCard = findViewById(R.id.yourCourseCard)
         yourCourseIcon = findViewById(R.id.yourCourseIcon)
+        profileImageView = findViewById(R.id.profileImageView)
         yourCourseTitle = findViewById(R.id.yourCourseTitle)
         progressText = findViewById(R.id.progressTxt)
         progressBar = findViewById(R.id.progressBar)
@@ -140,6 +145,7 @@ class HomeActivity : ComponentActivity() {
             performClickAnimation(seeAllButton)
             openCourseListActivity("Your")
         }
+
     }
 
     override fun onStart() {
@@ -154,7 +160,7 @@ class HomeActivity : ComponentActivity() {
     }
 
     private fun fetchFirstCompletedCourse(email: String) {
-        firebaseService.getFirstCompletedCourse(email) { course, progress, error ->
+        firebaseService.getFirstCompletedCourse(email) { course, progress, _ ->
             Log.d("HomeActivity", "Progress: $progress")
 
             if (course != null && progress != null) {
@@ -175,7 +181,7 @@ class HomeActivity : ComponentActivity() {
                 noCourses.text = "You have no registered courses"
                 yourCourseCard.visibility = View.GONE
                 noCourses.visibility = View.VISIBLE
-                Log.e("HomeActivity", error ?: "Error fetching first completed course")
+
             }
         }
     }
@@ -188,12 +194,16 @@ class HomeActivity : ComponentActivity() {
     }
 
     private fun initData(email: String) {
-        firebaseService.getUserData(email) { user, error ->
+        firebaseService.getUserData(email) { user, _ ->
             if (user != null) {
                 nameViewText.text = user.name
-                providerViewText.text = user.provider
+                Glide.with(this)
+                    .load(user.profileImageUrl)
+                    .transform(RoundedCornersTransformation(this, 25f))
+                    .into(profileImageView)
             } else {
-                showAlert(error ?: "An error occurred while fetching user data.")
+                ToastManager.showToast("Could not complete the operation.", this, ToastType.ERROR)
+
             }
         }
     }
@@ -203,8 +213,12 @@ class HomeActivity : ComponentActivity() {
 
         signOutButton.setOnClickListener {
             performClickAnimation(signOutButton)
+
+            ToastManager.showToast("See you later!", this, ToastType.INFO)
             FirebaseAuth.getInstance().signOut()
             val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
             val prefs: SharedPreferences.Editor? =
                 getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
 
@@ -214,12 +228,4 @@ class HomeActivity : ComponentActivity() {
         }
     }
 
-    private fun showAlert(message: String) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Error")
-        builder.setMessage(message)
-        builder.setPositiveButton("Accept", null)
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
-    }
 }

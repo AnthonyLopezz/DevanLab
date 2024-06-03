@@ -11,14 +11,31 @@ fun saveCourses(courses: List<Course>) {
 
     for (course in courses) {
         val courseRef = coursesCollection.document(course.id.toString())
-        courseRef.set(course).addOnSuccessListener {
-            val modulesCollection = courseRef.collection("modules")
-            for (module in course.modules) {
-                modulesCollection.document(module.id.toString()).set(module)
+        courseRef.set(course)
+            .addOnSuccessListener {
+                val modulesCollection = courseRef.collection("modules")
+                for (module in course.modules) {
+                    val moduleRef = modulesCollection.document(module.id.toString())
+                    moduleRef.set(module)
+                        .addOnSuccessListener {
+                            val conceptsCollection = moduleRef.collection("concepts")
+                            for (concept in module.concepts) {
+                                conceptsCollection.document(concept.id.toString()).set(concept)
+                            }
+
+                            val quizCollection = moduleRef.collection("quiz")
+                            for (question in module.quiz) {
+                                quizCollection.document(question.id.toString()).set(question)
+                            }
+                        }
+                        .addOnFailureListener { e ->
+                            e.printStackTrace()
+                        }
+                }
             }
-        }.addOnFailureListener { e ->
-            e.printStackTrace()
-        }
+            .addOnFailureListener { e ->
+                e.printStackTrace()
+            }
     }
 }
 

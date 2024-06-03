@@ -1,23 +1,32 @@
 package com.devan.lab.Activity
 
-import android.app.AlertDialog
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.view.View
 import android.widget.EditText
-import android.widget.Toast
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import com.bumptech.glide.Glide
 import com.devan.lab.Models.User
 import com.devan.lab.R
+import com.devan.lab.Utils.RoundedCornersTransformation
+import com.devan.lab.Utils.ToastManager
+import com.devan.lab.Utils.ToastType
 import com.devan.lab.Utils.performClickAnimation
 import com.devan.lab.service.FirebaseService
-import com.example.validator.validateEmail
 import com.example.validator.validateInputs
-import com.example.validator.validatePasswords
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-
+import com.google.firebase.storage.FirebaseStorage
 
 class SignupActivity : AppCompatActivity() {
 
@@ -26,9 +35,15 @@ class SignupActivity : AppCompatActivity() {
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
     private lateinit var rePasswordEditText: EditText
+    private lateinit var userPic: TextView
+    private lateinit var profileImageView: ImageView
+    private lateinit var selectedImageUri: Uri
+    private lateinit var frameLayout: FrameLayout
+    private lateinit var loadingAnimation: RelativeLayout
+
 
     private val firebaseService by lazy {
-        FirebaseService(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance())
+        FirebaseService(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance(), FirebaseStorage.getInstance())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,9 +61,20 @@ class SignupActivity : AppCompatActivity() {
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         rePasswordEditText = findViewById(R.id.rePasswordEditText)
+        profileImageView = findViewById(R.id.profileImageView)
+        userPic = findViewById(R.id.userPic)
+        frameLayout = findViewById(R.id.frameLayout)
+        loadingAnimation = findViewById(R.id.loading_animation)
+
+        loadingAnimation.visibility = View.GONE
     }
 
     private fun setupListeners() {
+        profileImageView.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            resultLauncher.launch(intent)
+        }
+
         signUpButton.setOnClickListener {
             performClickAnimation(signUpButton)
             val name = nameEditText.text.toString()
@@ -57,18 +83,28 @@ class SignupActivity : AppCompatActivity() {
             val rePassword = rePasswordEditText.text.toString()
             val provider = ProviderType.BASIC.toString()
 
-            val (isValid, message) = validateInputs(name, email, password, rePassword)
-            if (!isValid) {
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            if (!this::selectedImageUri.isInitialized) {
+                ToastManager.showToast("Please select a profile picture.", this, ToastType.INFO)
                 return@setOnClickListener
             }
 
-            val user = User(name, email, provider)
-            firebaseService.registerUser(user, password) { success, error ->
-                if (success) {
-                    showHome(user.email, ProviderType.BASIC)
-                } else {
-                    showAlert(error ?: "An error occurred with user registration.")
+            val (isValid, message) = validateInputs(name, email, password, rePassword)
+            if (!isValid) {
+                ToastManager.showToast(message, this, ToastType.INFO)
+                return@setOnClickListener
+            }
+
+            loadingAnimation.visibility = View.VISIBLE
+
+            firebaseService.uploadProfileImage(selectedImageUri) { imageUrl ->
+                val user = User(name, email, provider, imageUrl)
+                firebaseService.registerUser(user, password) { success, error ->
+                    if (success) {
+                        loadingAnimation.visibility = View.GONE
+                        showHome(user.email, ProviderType.BASIC)
+                    } else {
+                        ToastManager.showToast("We could not process your data.", this, ToastType.INFO)
+                    }
                 }
             }
         }
@@ -79,15 +115,23 @@ class SignupActivity : AppCompatActivity() {
             putExtra("email", email)
             putExtra("provider", provider)
         }
+        ToastManager.showToast("Registration Successfully", this, ToastType.SUCCESS)
         startActivity(homeIntent)
     }
 
-    private fun showAlert(message: String) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Error")
-        builder.setMessage(message)
-        builder.setPositiveButton("Accept", null)
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
+    private fun loadImage(uri: Uri) {
+        Glide.with(this)
+            .load(uri)
+            .transform(RoundedCornersTransformation(this, 22f))
+            .into(profileImageView)
+    }
+
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            userPic.text = "Looks great!"
+            selectedImageUri = data?.data ?: return@registerForActivityResult
+            loadImage(selectedImageUri)
+        }
     }
 }

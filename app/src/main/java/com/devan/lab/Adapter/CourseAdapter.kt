@@ -1,9 +1,6 @@
 package com.devan.lab.Adapter
 
-import UserProgress
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,13 +12,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.devan.lab.Activity.CourseDetailActivity
 import com.devan.lab.Models.Course
 import com.devan.lab.R
-import com.google.firebase.firestore.FirebaseFirestore
 
 
 class CourseAdapter : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>() {
 
 
     private var courses: List<Course> = listOf()
+    private var courseListFull: List<Course> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder {
         val view =
@@ -43,9 +40,19 @@ class CourseAdapter : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>() {
 
     fun setCourses(newCourses: List<Course>) {
         courses = newCourses
+        courseListFull = ArrayList(courses)
         notifyDataSetChanged()
 
 
+    }
+
+    fun filterList(filteredList: List<Course>) {
+        courses = filteredList
+        notifyDataSetChanged()
+    }
+
+    fun getCourses(): List<Course> {
+        return courseListFull
     }
 
     class CourseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

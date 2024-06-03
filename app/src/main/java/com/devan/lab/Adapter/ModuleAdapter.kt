@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.devan.lab.Activity.CourseDetailActivity
 import com.devan.lab.Activity.ModuleDetailActivity
 import com.devan.lab.Models.Module
 import com.devan.lab.R

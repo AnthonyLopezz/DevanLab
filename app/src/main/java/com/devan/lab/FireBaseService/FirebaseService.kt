@@ -2,17 +2,21 @@
 package com.devan.lab.service
 
 import UserProgress
+import android.net.Uri
 import android.util.Log
 import com.devan.lab.Models.Course
 import com.devan.lab.Models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID
 
 
 class FirebaseService(
     private val firebaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val storage: FirebaseStorage
 ) {
 
     fun registerUser(user: User, password: String, callback: (Boolean, String?) -> Unit) {
@@ -25,6 +29,21 @@ class FirebaseService(
                     callback(false, task.exception?.message)
                 }
             }
+    }
+
+    fun uploadProfileImage(imageUri: Uri, callback: (String) -> Unit) {
+        val fileName = UUID.randomUUID().toString()
+        val ref = storage.getReference("/images/$fileName")
+        ref.putFile(imageUri).addOnSuccessListener {
+            ref.downloadUrl.addOnSuccessListener { uri ->
+                callback(uri.toString())
+            }
+        }
+    }
+
+    fun registerGoogleUser(user: User, callback: (Boolean, String?) -> Unit) {
+            firestore.collection("users").document(user.email).set(user.toMap())
+            callback(true, null)
     }
 
     fun getUserData(email: String, callback: (User?, String?) -> Unit) {

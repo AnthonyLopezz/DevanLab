@@ -1,26 +1,30 @@
 package com.devan.lab.Activity
 
 import ModuleAdapter
-import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.devan.lab.Adapter.ArchiveAdapter
-import com.devan.lab.Adapter.CourseAdapter
 import com.devan.lab.ViewModel.ArchiveViewModel
 import com.devan.lab.databinding.ActivityCourseDetailBinding
 import com.devan.lab.service.FirebaseService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.devan.lab.R
+import com.devan.lab.Utils.ToastManager
+import com.devan.lab.Utils.ToastType
+import com.google.firebase.storage.FirebaseStorage
 
 
 class CourseDetailActivity : AppCompatActivity() {
@@ -31,13 +35,16 @@ class CourseDetailActivity : AppCompatActivity() {
     private lateinit var courseName: TextView
     private lateinit var courseCategory: TextView
     private lateinit var courseIcon: ImageView
+    private lateinit var courseBg: ConstraintLayout
     private lateinit var moduleAdapter: ModuleAdapter
     private lateinit var recyclerView: RecyclerView
+    private lateinit var loadingAnimation: RelativeLayout
 
 
+//    private var vibrantColor: Int = 0 // Variable to hold the vibrant color testing... (not implement yet)
 
     private val firebaseService by lazy {
-        FirebaseService(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance())
+        FirebaseService(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance(), FirebaseStorage.getInstance())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,23 +82,21 @@ class CourseDetailActivity : AppCompatActivity() {
         prefs?.apply()
     }
 
-
     private fun initComponents(){
         courseName = findViewById(R.id.courseName)
         courseCategory = findViewById(R.id.courseCategory)
         courseIcon = findViewById(R.id.courseIcon)
         recyclerView = findViewById(R.id.viewModules)
+        courseBg = findViewById(R.id.courseBg)
 
+        loadingAnimation = findViewById(R.id.loading_animation)
+
+        loadingAnimation.visibility = View.GONE
     }
-
-    private fun setData(){
-        val prefs: SharedPreferences.Editor? =
-            getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
-    }
-
 
     private fun initData(id: String) {
-        firebaseService.getCourseById(id) { course, error ->
+        loadingAnimation.visibility = View.VISIBLE
+        firebaseService.getCourseById(id) { course, _ ->
             if (course != null) {
                 courseName.text = course.title
                 courseCategory.text = course.category
@@ -99,24 +104,17 @@ class CourseDetailActivity : AppCompatActivity() {
                 moduleAdapter.setModules(course.modules)
 
                 val iconResId = resources.getIdentifier(course.icon, "drawable", packageName)
+                loadingAnimation.visibility = View.GONE
                 if (iconResId != 0) {
+
                     courseIcon.setImageResource(iconResId)
                 } else {
                     courseIcon.setImageResource(R.drawable.placeholder_icon)
                 }
-
             } else {
-                showAlert(error ?: "An error occurred while fetching course data.")
+                ToastManager.showToast("Could not complete the operation.", this, ToastType.ERROR)
+                loadingAnimation.visibility = View.GONE
             }
         }
-    }
-
-    private fun showAlert(message: String) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Error")
-        builder.setMessage(message)
-        builder.setPositiveButton("Accept", null)
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
     }
 }
