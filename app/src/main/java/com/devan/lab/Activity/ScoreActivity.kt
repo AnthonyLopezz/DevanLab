@@ -16,6 +16,7 @@ import com.devan.lab.Models.Course
 import com.devan.lab.R
 import com.devan.lab.Utils.ToastManager
 import com.devan.lab.Utils.ToastType
+import com.devan.lab.Utils.performClickAnimation
 import com.devan.lab.databinding.ActivityScoreBinding
 import com.devan.lab.service.FirebaseService
 import com.google.firebase.auth.FirebaseAuth
@@ -51,10 +52,9 @@ class ScoreActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         findViewById<View>(R.id.generatePdf).setOnClickListener {
+            performClickAnimation(findViewById(R.id.generatePdf))
             createPdfWithIText()
         }
-
-
 
         prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
         firebaseService = FirebaseService(FirebaseAuth.getInstance(), FirebaseFirestore.getInstance(), FirebaseStorage.getInstance())
@@ -82,6 +82,7 @@ class ScoreActivity : AppCompatActivity() {
             scoreResult.text = "$score/5"
 
             backToHome.setOnClickListener {
+                performClickAnimation(backToHome)
                 val intent = Intent(this@ScoreActivity, HomeActivity::class.java)
                 intent.putExtra("email", email)
                 startActivity(intent)

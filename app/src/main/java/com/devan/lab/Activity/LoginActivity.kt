@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.ContextCompat
 import com.devan.lab.Models.User
 import com.devan.lab.R
 import com.devan.lab.Utils.ToastManager
@@ -19,13 +20,10 @@ import com.devan.lab.Utils.performClickAnimation
 import com.devan.lab.service.FirebaseService
 import com.example.validator.validateEmail
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
@@ -103,24 +101,28 @@ class LoginActivity : AppCompatActivity() {
             val email = emailEditText.text.toString()
             val pass = passwordEditText.text.isNotEmpty()
 
+            val errorTextInput = ContextCompat.getDrawable(this, R.drawable.fail_edittext_background)
+            val successTextInput = ContextCompat.getDrawable(this, R.drawable.success_edittext_background)
 
 
             val (isValid, message) = validateEmail(email)
             if (!isValid) {
-                emailEditText.setBackgroundColor(R.drawable.fail_edittext_background)
+
+                emailEditText.setBackground(errorTextInput)
                 ToastManager.showToast(message, this, ToastType.INFO)
                 return@setOnClickListener
             }
 
             if (!pass){
-                passwordEditText.setBackgroundColor(R.drawable.fail_edittext_background)
-
+                passwordEditText.setBackground(errorTextInput)
                 ToastManager.showToast("Empty Password!", this, ToastType.INFO)
                 return@setOnClickListener
             }
 
             if (emailEditText.text.isNotEmpty() && passwordEditText.text.isNotEmpty()) {
                 loadingAnimation.visibility = View.VISIBLE
+                passwordEditText.setBackground(successTextInput)
+                emailEditText.setBackground(successTextInput)
 
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(
                     emailEditText.text.toString(),
@@ -131,6 +133,8 @@ class LoginActivity : AppCompatActivity() {
                         loadingAnimation.visibility = View.GONE
 
                     } else {
+                        loadingAnimation.visibility = View.GONE
+
                         ToastManager.showToast(
                             "Invalid Credentials.",
                             this,
