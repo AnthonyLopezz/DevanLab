@@ -1,6 +1,5 @@
 package com.devan.lab.Adapter
 
-import UserProgress
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.devan.lab.Activity.CourseDetailActivity
 import com.devan.lab.Models.Course
+import com.devan.lab.Models.UserProgress
 import com.devan.lab.R
 
 class CourseProgressAdapter : RecyclerView.Adapter<CourseProgressAdapter.CourseViewHolder>() {

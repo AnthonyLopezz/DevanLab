@@ -196,6 +196,10 @@ class HomeActivity : ComponentActivity() {
     private fun initData(email: String) {
         firebaseService.getUserData(email) { user, _ ->
             if (user != null) {
+                val prefs: SharedPreferences.Editor? =
+                    getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
+                prefs?.putString("username", user.name)
+                prefs?.apply()
                 nameViewText.text = user.name
                 Glide.with(this)
                     .load(user.profileImageUrl)

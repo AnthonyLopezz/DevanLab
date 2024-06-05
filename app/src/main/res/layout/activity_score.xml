@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Mischka950"
+    tools:context=".Activity.ScoreActivity">
+
+    <ImageView
+        android:id="@+id/imageView16"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.383"
+        app:srcCompat="@drawable/bannersantotomas" />
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/your_score"
+        android:textColor="@color/Mischka50"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/imageView16"
+        app:layout_constraintStart_toStartOf="@+id/imageView16"
+        app:layout_constraintTop_toBottomOf="@+id/imageView16" />
+
+    <TextView
+        android:id="@+id/scoreResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:textColor="@color/Mischka50"
+        app:layout_constraintEnd_toEndOf="@+id/textView10"
+        app:layout_constraintStart_toStartOf="@+id/textView10"
+        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/backToHome"
+        style="@style/Widget.AppCompat.Button"
+        android:background="@drawable/button_background"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Back to Home"
+        app:layout_constraintEnd_toEndOf="@+id/textView10"
+        app:layout_constraintStart_toStartOf="@+id/textView10"
+        app:layout_constraintTop_toBottomOf="@+id/scoreResult" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/generatePdf"
+        style="@style/Widget.AppCompat.Button"
+        android:background="@drawable/button_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:drawableEnd="@drawable/layer_download"
+        android:padding="8dp"
+        android:text="Generate Module Certificate"
+        app:layout_constraintEnd_toEndOf="@+id/backToHome"
+        app:layout_constraintStart_toStartOf="@+id/backToHome"
+        app:layout_constraintTop_toBottomOf="@+id/backToHome" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

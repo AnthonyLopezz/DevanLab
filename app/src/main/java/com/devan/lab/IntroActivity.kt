@@ -12,10 +12,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.devan.lab.Activity.HomeActivity
 import com.devan.lab.Activity.LoginActivity
-import com.devan.lab.Models.Course
-import com.devan.lab.Models.Module
-import com.devan.lab.Utils.courses
-import com.devan.lab.Utils.saveCourses
 
 class IntroActivity : ComponentActivity() {
 

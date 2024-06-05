@@ -171,34 +171,25 @@ class LoginActivity : AppCompatActivity() {
             try {
                 val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
 
-                if (account != null) {
+                val credential: AuthCredential =
+                    GoogleAuthProvider.getCredential(account.idToken, null)
 
-                    val credential: AuthCredential =
-                        GoogleAuthProvider.getCredential(account.idToken, null)
+                FirebaseAuth.getInstance()
+                    .signInWithCredential(credential).addOnCompleteListener {
+                        if (it.isSuccessful) {
+                            showHome(account.email ?: "", ProviderType.GOOGLE)
+                            val welcome = "Welcome!"
+                            ToastManager.showToast(welcome, this, ToastType.INFO)
 
+                        } else {
+                            ToastManager.showToast(
+                                "Could not complete the Authentication.",
+                                this,
+                                ToastType.ERROR
+                            )
 
-                    FirebaseAuth.getInstance()
-                        .signInWithCredential(credential).addOnCompleteListener {
-                            if (it.isSuccessful) {
-
-                                val user = User(account.displayName?:"", account.email ?: "", ProviderType.GOOGLE.toString())
-                                firebaseService.registerGoogleUser(user){success, error ->
-
-                                }
-                                showHome(account.email ?: "", ProviderType.GOOGLE)
-                                val welcome = "Welcome!"
-                                ToastManager.showToast(welcome, this, ToastType.INFO)
-
-                            } else {
-                                ToastManager.showToast(
-                                    "Could not complete the Authentication.",
-                                    this,
-                                    ToastType.ERROR
-                                )
-
-                            }
                         }
-                }
+                    }
             } catch (e: ApiException) {
 
                 ToastManager.showToast(

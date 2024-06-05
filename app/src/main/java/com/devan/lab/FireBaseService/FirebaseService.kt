@@ -1,13 +1,12 @@
 // FirebaseService.kt
 package com.devan.lab.service
 
-import UserProgress
 import android.net.Uri
 import android.util.Log
 import com.devan.lab.Models.Course
 import com.devan.lab.Models.User
+import com.devan.lab.Models.UserProgress
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
@@ -42,8 +41,8 @@ class FirebaseService(
     }
 
     fun registerGoogleUser(user: User, callback: (Boolean, String?) -> Unit) {
-            firestore.collection("users").document(user.email).set(user.toMap())
-            callback(true, null)
+        firestore.collection("users").document(user.email).set(user.toMap())
+        callback(true, null)
     }
 
     fun getUserData(email: String, callback: (User?, String?) -> Unit) {
@@ -74,28 +73,6 @@ class FirebaseService(
     }
 
 
-    fun getUserProgress(email: String, courseId: Int, callback: (UserProgress?, String?) -> Unit) {
-        val progressRef = firestore.collection("users").document(email).collection("progress")
-            .document(courseId.toString())
-
-        progressRef.get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val progress = document.toObject(UserProgress::class.java)
-                    if (progress != null) {
-                        callback(progress, null)
-                    } else {
-                        createNewProgress(email, courseId, callback)
-                    }
-                } else {
-                    createNewProgress(email, courseId, callback)
-                }
-            }
-            .addOnFailureListener { exception ->
-                callback(null, exception.message)
-            }
-    }
-
     fun getAllUserProgress(email: String, callback: (Map<Course, UserProgress>, String?) -> Unit) {
         val userProgressMap = mutableMapOf<Course, UserProgress>()
 
@@ -124,6 +101,57 @@ class FirebaseService(
             }
     }
 
+
+    fun getUserProgressModule(
+        email: String,
+        courseId: Int,
+        callback: (UserProgress?, String?) -> Unit
+    ) {
+        val progressRef = firestore.collection("users").document(email).collection("progress")
+            .document(courseId.toString())
+
+        Log.d("OMG", "Fetching user progress for email: $email and courseId: $courseId")
+
+        progressRef.get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    Log.d("OMG", "Document exists")
+                    val userProgress = document.toObject(UserProgress::class.java)
+                    Log.d("OMG", "USERPROGRESS: $userProgress")
+                    callback(userProgress, null)
+                } else {
+                    Log.d("OMG", "Document does not exist, creating new progress")
+                    createNewProgress(email, courseId) { newProgress, error ->
+                        Log.d("OMG", "New progress created: $newProgress, Error: $error")
+                        callback(newProgress, error)
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d("progressRef", "Failed to get document: ${exception.message}")
+                callback(null, exception.message)
+            }
+    }
+
+    fun getUserProgress(email: String, courseId: Int, callback: (UserProgress?, String?) -> Unit) {
+        val progressRef = firestore.collection("users").document(email).collection("progress")
+            .document(courseId.toString())
+
+        progressRef.get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val userProgress = document.toObject(UserProgress::class.java)
+                    callback(userProgress, null)
+                } else {
+                    createNewProgress(email, courseId) { newProgress, error ->
+                        callback(newProgress, error)
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                callback(null, exception.message)
+            }
+    }
 
     private fun createNewProgress(
         email: String,
@@ -159,7 +187,6 @@ class FirebaseService(
                 callback(false, exception.message)
             }
     }
-
 
     fun getCoursesByCategory(category: String, callback: (List<Course>?, String?) -> Unit) {
         firestore.collection("courses")

@@ -42,8 +42,6 @@ class CourseAdapter : RecyclerView.Adapter<CourseAdapter.CourseViewHolder>() {
         courses = newCourses
         courseListFull = ArrayList(courses)
         notifyDataSetChanged()
-
-
     }
 
     fun filterList(filteredList: List<Course>) {

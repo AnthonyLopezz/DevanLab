@@ -3,10 +3,11 @@
 
     <item android:drawable="@color/Mischka950"/>
     <item>
-        <bitmap android:src="@drawable/mask" android:gravity="center_horizontal" />
+        <bitmap android:src="@drawable/bannersantotomas" android:gravity="top"  />
     </item>
     <item>
-        <bitmap android:src="@drawable/bannersantotomas" android:gravity="bottom" />
+        <bitmap android:src="@drawable/mask" android:gravity="center_horizontal" />
     </item>
+
 
 </layer-list>

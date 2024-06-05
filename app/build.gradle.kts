@@ -97,4 +97,8 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.12.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.11.0")
 
+
+    implementation ("com.itextpdf:itext7-core:7.1.14")
+
+
 }

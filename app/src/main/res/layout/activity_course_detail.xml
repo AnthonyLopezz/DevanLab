@@ -79,12 +79,12 @@
                     android:textStyle="bold"
                     android:textSize="16sp"/>
 
-                <TextView
-                    android:id="@+id/textView20"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/Mischka50"
-                    android:text="View All" />
+<!--                <TextView-->
+<!--                    android:id="@+id/textView20"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:textColor="@color/Mischka50"-->
+<!--                    android:text="View All" />-->
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -110,12 +110,12 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/textView19"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="View All"
-                    android:textColor="@color/Mischka50" />
+<!--                <TextView-->
+<!--                    android:id="@+id/textView19"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="View All"-->
+<!--                    android:textColor="@color/Mischka50" />-->
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView

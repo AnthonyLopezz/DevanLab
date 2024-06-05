@@ -80,4 +80,8 @@
     <color name="error_color">#F44336</color>
     <color name="info_color">#2196F3</color>
 
+    <color name="correct_answer">#4CAF50</color>
+    <color name="error_answer">#F44336</color>
+
+
 </resources>
