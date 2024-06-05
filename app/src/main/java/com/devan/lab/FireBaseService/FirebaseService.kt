@@ -30,6 +30,12 @@ class FirebaseService(
             }
     }
 
+    fun saveUserFromGoogle(user: User, callback: (Boolean, String?) -> Unit) {
+        firestore.collection("users").document(user.email).set(user.toMap())
+        callback(true, null)
+
+    }
+
     fun uploadProfileImage(imageUri: Uri, callback: (String) -> Unit) {
         val fileName = UUID.randomUUID().toString()
         val ref = storage.getReference("/images/$fileName")

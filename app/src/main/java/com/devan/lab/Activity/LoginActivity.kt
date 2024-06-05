@@ -2,6 +2,7 @@ package com.devan.lab.Activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -154,53 +155,65 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signInWithGoogle() {
-
         val googleConf = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build()
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
 
-        val googleClient: GoogleSignInClient = GoogleSignIn.getClient(this, googleConf)
-        googleClient.signOut()
-        startActivityForResult(googleClient.signInIntent, GOOGLE_SIGN_IN)
+        googleSignInClient = GoogleSignIn.getClient(this, googleConf)
+        googleSignInClient.signOut()
+
+        val signInIntent = googleSignInClient.signInIntent
+        startActivityForResult(signInIntent, GOOGLE_SIGN_IN)
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode === GOOGLE_SIGN_IN) {
-            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
+        if (requestCode == GOOGLE_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
-
-                val credential: AuthCredential =
-                    GoogleAuthProvider.getCredential(account.idToken, null)
-
-                FirebaseAuth.getInstance()
-                    .signInWithCredential(credential).addOnCompleteListener {
-                        if (it.isSuccessful) {
-                            showHome(account.email ?: "", ProviderType.GOOGLE)
-                            val welcome = "Welcome!"
-                            ToastManager.showToast(welcome, this, ToastType.INFO)
-
+                val account = task.getResult(ApiException::class.java)
+                if (account != null) {
+                    val name = account.displayName
+                    val email = account.email
+                    val personPhoto = account.photoUrl
+                    val user = User(name.toString(), email.toString(), ProviderType.GOOGLE.toString(), personPhoto.toString())
+                    Log.d("GoogleSignIn", "Name: $user")
+                    firebaseService.saveUserFromGoogle(user) { success, _ ->
+                        if (success) {
+                            loadingAnimation.visibility = View.GONE
+                            showHome(user.email, ProviderType.GOOGLE)
                         } else {
-                            ToastManager.showToast(
-                                "Could not complete the Authentication.",
-                                this,
-                                ToastType.ERROR
-                            )
-
+                            ToastManager.showToast("We could not process your data.", this, ToastType.INFO)
                         }
                     }
+                    firebaseAuthWithGoogle(account.idToken!!, name)
+                } else {
+                    ToastManager.showToast("Google sign-in failed.", this, ToastType.ERROR)
+                }
             } catch (e: ApiException) {
-
-                ToastManager.showToast(
-                    "Could not complete the Authentication.",
-                    this,
-                    ToastType.ERROR
-                )
+                Log.e("GoogleSignIn", "Google sign-in failed: ${e.statusCode}")
+                ToastManager.showToast("Google sign-in failed", this, ToastType.ERROR)
             }
-
-
         }
     }
+
+    private fun firebaseAuthWithGoogle(idToken: String, displayName: String?) {
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    val user = auth.currentUser
+                    val profileImageUrl = user?.photoUrl
+                    showHome(user?.email ?: "", ProviderType.GOOGLE)
+                    ToastManager.showToast("Welcome!", this, ToastType.INFO)
+                } else {
+                    Log.e("FirebaseAuth", "Authentication Failed: ${task.exception?.message}")
+                    ToastManager.showToast("Authentication Failed", this, ToastType.ERROR)
+                }
+            }
+    }
+
+
 
 }

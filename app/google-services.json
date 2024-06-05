@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "642763740721-hjtqbnt7bd1k0jfijh33ob1kdk6faoap.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.devan.lab",
+            "certificate_hash": "521179f586d98da6bc6df0c1de812f606d2712b1"
+          }
+        },
+        {
           "client_id": "642763740721-u4p8gg5m3aq2h9q5komcpj1qek83bc9u.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

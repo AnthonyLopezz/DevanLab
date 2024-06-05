@@ -98,7 +98,7 @@ class SignupActivity : AppCompatActivity() {
 
             firebaseService.uploadProfileImage(selectedImageUri) { imageUrl ->
                 val user = User(name, email, provider, imageUrl)
-                firebaseService.registerUser(user, password) { success, error ->
+                firebaseService.registerUser(user, password) { success, _ ->
                     if (success) {
                         loadingAnimation.visibility = View.GONE
                         showHome(user.email, ProviderType.BASIC)

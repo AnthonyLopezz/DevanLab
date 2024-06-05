@@ -19,32 +19,32 @@
 
     <!--    Grey? Color    -->
 
-    <color name="Mischka50">#f6f6f6</color>
-    <color name="Mischka100">#e7e7e7</color>
-    <color name="Mischka200">#d1d1d1</color>
-    <color name="Mischka300">#b0b0b0</color>
-    <color name="Mischka400">#888888</color>
-    <color name="Mischka500">#6d6d6d</color>
-    <color name="Mischka600">#5d5d5d</color>
-    <color name="Mischka700">#4f4f4f</color>
-    <color name="Mischka800">#454545</color>
-    <color name="Mischka900">#3d3d3d</color>
-    <color name="Mischka950">#0a0a0a</color>
+<!--    <color name="Mischka50">#f6f6f6</color>-->
+<!--    <color name="Mischka100">#e7e7e7</color>-->
+<!--    <color name="Mischka200">#d1d1d1</color>-->
+<!--    <color name="Mischka300">#b0b0b0</color>-->
+<!--    <color name="Mischka400">#888888</color>-->
+<!--    <color name="Mischka500">#6d6d6d</color>-->
+<!--    <color name="Mischka600">#5d5d5d</color>-->
+<!--    <color name="Mischka700">#4f4f4f</color>-->
+<!--    <color name="Mischka800">#454545</color>-->
+<!--    <color name="Mischka900">#3d3d3d</color>-->
+<!--    <color name="Mischka950">#0a0a0a</color>-->
 
     <!--    Water Color    -->
 
 
-<!--    <color name="Mischka50">#f1fafe</color>-->
-<!--    <color name="Mischka100">#e2f3fc</color>-->
-<!--    <color name="Mischka200">#bfe6f8</color>-->
-<!--    <color name="Mischka300">#86d5f3</color>-->
-<!--    <color name="Mischka400">#46bfea</color>-->
-<!--    <color name="Mischka500">#1ea7d9</color>-->
-<!--    <color name="Mischka600">#0f7ba9</color>-->
-<!--    <color name="Mischka700">#0f6c95</color>-->
-<!--    <color name="Mischka800">#105a7c</color>-->
-<!--    <color name="Mischka900">#134b67</color>-->
-<!--    <color name="Mischka950">#0d3044</color>-->
+    <color name="Mischka50">#f1fafe</color>
+    <color name="Mischka100">#e2f3fc</color>
+    <color name="Mischka200">#bfe6f8</color>
+    <color name="Mischka300">#86d5f3</color>
+    <color name="Mischka400">#46bfea</color>
+    <color name="Mischka500">#1ea7d9</color>
+    <color name="Mischka600">#0f7ba9</color>
+    <color name="Mischka700">#0f6c95</color>
+    <color name="Mischka800">#105a7c</color>
+    <color name="Mischka900">#134b67</color>
+    <color name="Mischka950">#0d3044</color>
 
     <!--    Estern Blue Color    -->
 
@@ -82,6 +82,7 @@
 
     <color name="correct_answer">#4CAF50</color>
     <color name="error_answer">#F44336</color>
+    <color name="orange_bar">#FF5722</color>
 
 
 </resources>

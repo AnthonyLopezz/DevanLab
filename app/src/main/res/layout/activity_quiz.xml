@@ -85,7 +85,7 @@
                 android:indeterminateDuration="10"
                 android:max="5"
                 android:progress="4"
-                app:indicatorColor="@color/Mischka50"
+                app:indicatorColor="@color/orange_bar"
                 app:trackCornerRadius="50dp"
                 app:trackThickness="14dp" />
 
@@ -106,6 +106,13 @@
                 android:id="@+id/questionList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
+
+            <ImageView
+                android:id="@+id/imageView22"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:srcCompat="@drawable/bannersantotomas" />
 
         </LinearLayout>
     </ScrollView>
